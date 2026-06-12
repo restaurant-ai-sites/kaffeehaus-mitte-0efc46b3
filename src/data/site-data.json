@@ -1,0 +1,49 @@
+{
+  "restaurant": {
+    "name": "Kaffeehaus Mitte",
+    "tagline": "Genussvoller Kaffee in Berlin Mitte",
+    "about": "Willkommen im Kaffeehaus Mitte, Ihrem Treffpunkt für exquisite Spezialitätenkaffees und hausgemachte Leckereien. In unserem minimalistischen Ambiente servieren wir Ihnen die besten Kreationen der dritten Welle des Kaffees, ergänzt durch köstliche avokadobasierte Tosts und frisch gebackene Kuchen. Ob für ein entspanntes Frühstück oder einen schnellen Kaffee zwischendurch – bei uns sind Sie genau richtig. Besuchen Sie uns in der Torstraße 89 und erleben Sie die perfekte Kombination aus Geschmack und Gemütlichkeit.",
+    "phone": "030 4455 6677",
+    "email": "hallo@kaffeehaus-mitte.de",
+    "address": "Torstraße 89, 10119 Berlin",
+    "openingHours": {
+      "Montag": "08:00-18:00",
+      "Dienstag": "08:00-18:00",
+      "Mittwoch": "08:00-18:00",
+      "Donnerstag": "08:00-18:00",
+      "Freitag": "08:00-18:00",
+      "Samstag": "09:00-18:00",
+      "Sonntag": "09:00-18:00"
+    },
+    "cuisine": "Spezialitätenkaffee",
+    "priceRange": "mid"
+  },
+  "seo": {
+    "title": "Kaffeehaus Mitte – Spezialitätenkaffee in Berlin",
+    "description": "Entdecken Sie das Kaffeehaus Mitte in Berlin. Genießen Sie hochwertige Kaffees und hausgemachte Köstlichkeiten in modernem Ambiente."
+  },
+  "content": {
+    "welcomeHeading": "Willkommen im Kaffeehaus Mitte",
+    "welcomeSubtext": "Genießen Sie besten Kaffee und hausgemachte Leckereien.",
+    "reservationCta": "Jetzt reservieren",
+    "orderCta": "Bestellen Sie online",
+    "contactHeading": "Kontaktieren Sie uns",
+    "footerText": "Ihr Kaffeehaus in Berlin Mitte."
+  },
+  "images": {
+    "interior": "/images/interior_0.webp",
+    "food": "/images/food_3.webp",
+    "exterior": "/images/exterior_4.webp",
+    "hero": "/images/hero_generated.webp"
+  },
+  "features": {
+    "hasReservation": false,
+    "hasOrdering": false,
+    "paypalClientId": ""
+  },
+  "menu": [],
+  "legal": {
+    "impressum": "## Impressum\n\n**Angaben gemäß § 5 TMG**\n\nKaffeehaus Mitte\nTorstraße 89, 10119 Berlin\n030 4455 6677\nhallo@kaffeehaus-mitte.de\n\n**Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:**\nKaffeehaus Mitte\n\n**Haftungsausschluss:**\nDie Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.\n\n**Urheberrecht:**\nDie durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.\n",
+    "datenschutz": "## Datenschutzerklärung\n\n**1. Datenschutz auf einen Blick**\n\nDiese Datenschutzerklärung klärt Sie über die Art, den Umfang und Zweck der Verarbeitung von personenbezogenen Daten auf unserer Website auf.\n\n**2. Verantwortliche Stelle**\n\nKaffeehaus Mitte\nTorstraße 89, 10119 Berlin\nE-Mail: hallo@kaffeehaus-mitte.de\n\n**3. Erhebung und Speicherung personenbezogener Daten**\n\nBeim Besuch unserer Website werden automatisch Informationen allgemeiner Natur erfasst (Server-Log-Dateien). Diese Daten erlauben keine Rückschlüsse auf Ihre Person.\n\n**4. Kontaktformular**\n\nWenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen gespeichert.\n\n**5. Cookies**\n\nUnsere Website verwendet Cookies. Durch die Nutzung unserer Website erklären Sie sich damit einverstanden.\n\n**6. Ihre Rechte**\n\nSie haben jederzeit das Recht auf Auskunft, Berichtigung, Löschung oder Einschränkung der Verarbeitung Ihrer gespeicherten personenbezogenen Daten.\n\n**7. Kontakt Datenschutzbeauftragter**\n\nBei Fragen zum Datenschutz wenden Sie sich an: hallo@kaffeehaus-mitte.de\n"
+  }
+}
