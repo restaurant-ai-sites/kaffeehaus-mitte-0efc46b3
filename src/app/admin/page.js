@@ -73,8 +73,8 @@ export default function AdminPage() {
           className="text-sm text-coffee/50 hover:text-coffee">Abmelden</button>
       </div>
 
-      <div className="flex gap-2 border-b border-coffee/15 mb-6">
-        {[["bilder", "🖼 Bilder"], ["support", "💬 Support"]].map(([id, label]) => (
+      <div className="flex gap-2 border-b border-coffee/15 mb-6 flex-wrap">
+        {[["bilder", "🖼 Bilder"], ["einstellungen", "⚙️ Einstellungen"], ["support", "💬 Support"]].map(([id, label]) => (
           <button key={id} onClick={() => setTab(id)}
             className={`px-4 py-2.5 text-sm ${tab === id ? "border-b-2 border-terra font-semibold text-coffee" : "text-coffee/50"}`}>
             {label}
@@ -83,6 +83,7 @@ export default function AdminPage() {
       </div>
 
       {tab === "bilder" && <BilderTab adminKey={adminKey} />}
+      {tab === "einstellungen" && <EinstellungenTab adminKey={adminKey} />}
       {tab === "support" && <SupportTab adminKey={adminKey} />}
     </main>
   );
@@ -171,6 +172,71 @@ function ImageSlot({ slotKey, label, url, uploading, onUpload, onRemove }) {
       <input ref={fileRef} type="file" accept="image/*" className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
     </div>
+  );
+}
+
+const DAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+
+function EinstellungenTab({ adminKey }) {
+  const [form, setForm] = useState({ phone: "", email: "", address: "", opening_hours: {} });
+  const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    api("/api/admin/settings", adminKey)
+      .then((d) => setForm({ phone: d.phone || "", email: d.email || "", address: d.address || "", opening_hours: d.opening_hours || {} }))
+      .finally(() => setLoading(false));
+  }, [adminKey]);
+
+  async function save(e) {
+    e.preventDefault();
+    setMsg("");
+    try {
+      await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify(form),
+      });
+      setMsg("✓ Gespeichert!");
+    } catch (e) {
+      setMsg("Fehler: " + e.message);
+    }
+  }
+
+  function setHour(day, val) {
+    setForm((p) => ({ ...p, opening_hours: { ...p.opening_hours, [day]: val } }));
+  }
+
+  if (loading) return <p className="text-coffee/50 text-sm">Lädt…</p>;
+
+  return (
+    <form onSubmit={save} className="space-y-6 max-w-lg">
+      <div className="space-y-3">
+        <h3 className="font-display font-semibold text-coffee">Kontaktdaten</h3>
+        <input type="tel" placeholder="Telefon (z.B. +49 30 12345678)" value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputCls} />
+        <input type="email" placeholder="E-Mail" value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputCls} />
+        <textarea placeholder="Adresse" value={form.address} rows={2}
+          onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputCls} />
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="font-display font-semibold text-coffee">Öffnungszeiten</h3>
+        {DAYS.map((day) => (
+          <div key={day} className="flex items-center gap-3">
+            <span className="w-28 text-sm text-coffee/70 shrink-0">{day}</span>
+            <input type="text" placeholder="Ruhetag oder 11:00 – 22:00"
+              value={form.opening_hours[day] || ""}
+              onChange={(e) => setHour(day, e.target.value)}
+              className={`${inputCls} text-sm`} />
+          </div>
+        ))}
+      </div>
+
+      {msg && <p className={`text-sm ${msg.startsWith("✓") ? "text-green-700" : "text-red-600"}`}>{msg}</p>}
+      <button type="submit" className={btnCls}>Speichern</button>
+    </form>
   );
 }
 
