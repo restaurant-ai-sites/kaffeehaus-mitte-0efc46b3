@@ -8,12 +8,12 @@
     "address": "Torstraße 89, 10119 Berlin",
     "openingHours": {
       "Montag": "08:00-18:00",
-      "Dienstag": "08:00-18:00",
-      "Mittwoch": "08:00-18:00",
-      "Donnerstag": "08:00-18:00",
       "Freitag": "08:00-18:00",
       "Samstag": "09:00-18:00",
-      "Sonntag": "09:00-18:00"
+      "Sonntag": "09:00-18:00",
+      "Dienstag": "08:00-18:00",
+      "Mittwoch": "08:00-18:00",
+      "Donnerstag": "08:00-18:00"
     },
     "cuisine": "Spezialitätenkaffee",
     "priceRange": "mid"
@@ -23,12 +23,12 @@
     "description": "Entdecken Sie das Kaffeehaus Mitte in Berlin. Genießen Sie hochwertige Kaffees und hausgemachte Köstlichkeiten in modernem Ambiente."
   },
   "content": {
-    "welcomeHeading": "Willkommen im Kaffeehaus Mitte",
-    "welcomeSubtext": "Genießen Sie besten Kaffee und hausgemachte Leckereien.",
-    "reservationCta": "Jetzt reservieren",
-    "orderCta": "Bestellen Sie online",
-    "contactHeading": "Kontaktieren Sie uns",
-    "footerText": "Ihr Kaffeehaus in Berlin Mitte."
+    "welcomeHeading": "",
+    "welcomeSubtext": "",
+    "reservationCta": "Tisch reservieren",
+    "orderCta": "Jetzt bestellen",
+    "contactHeading": "Kontakt",
+    "footerText": ""
   },
   "images": {
     "interior": "/images/interior_0.webp",
