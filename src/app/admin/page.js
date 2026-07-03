@@ -8,9 +8,12 @@ const btnCls = "bg-terra px-5 py-2.5 text-sm text-cream transition-colors hover:
 const IMAGE_SLOTS = [
   { key: "hero", label: "Hero (Kapak Fotoğrafı)" },
   { key: "about", label: "Hakkımızda Görseli" },
+  { key: "speisekarte", label: "Speisekarte Görseli" },
   { key: "gallery_1", label: "Galeri 1" },
   { key: "gallery_2", label: "Galeri 2" },
   { key: "gallery_3", label: "Galeri 3" },
+  { key: "gallery_4", label: "Galeri 4" },
+  { key: "gallery_5", label: "Galeri 5" },
 ];
 
 function api(path, key, init = {}) {
@@ -74,7 +77,7 @@ export default function AdminPage() {
       </div>
 
       <div className="flex gap-2 border-b border-coffee/15 mb-6 flex-wrap">
-        {[["bilder", "🖼 Bilder"], ["einstellungen", "⚙️ Einstellungen"], ["support", "💬 Support"]].map(([id, label]) => (
+        {[["bilder", "🖼 Bilder"], ["menu", "🍽 Speisekarte"], ["einstellungen", "⚙️ Einstellungen"], ["support", "💬 Support"]].map(([id, label]) => (
           <button key={id} onClick={() => setTab(id)}
             className={`px-4 py-2.5 text-sm ${tab === id ? "border-b-2 border-terra font-semibold text-coffee" : "text-coffee/50"}`}>
             {label}
@@ -83,6 +86,7 @@ export default function AdminPage() {
       </div>
 
       {tab === "bilder" && <BilderTab adminKey={adminKey} />}
+      {tab === "menu" && <SpeisenkarteTab adminKey={adminKey} />}
       {tab === "einstellungen" && <EinstellungenTab adminKey={adminKey} />}
       {tab === "support" && <SupportTab adminKey={adminKey} />}
     </main>
@@ -134,15 +138,8 @@ function BilderTab({ adminKey }) {
     <div className="space-y-5">
       {msg && <p className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded">{msg}</p>}
       {IMAGE_SLOTS.map(({ key, label }) => (
-        <ImageSlot
-          key={key}
-          slotKey={key}
-          label={label}
-          url={images[key]}
-          uploading={!!uploading[key]}
-          onUpload={(file) => upload(key, file)}
-          onRemove={() => remove(key)}
-        />
+        <ImageSlot key={key} slotKey={key} label={label} url={images[key]}
+          uploading={!!uploading[key]} onUpload={(file) => upload(key, file)} onRemove={() => remove(key)} />
       ))}
     </div>
   );
@@ -157,20 +154,149 @@ function ImageSlot({ slotKey, label, url, uploading, onUpload, onRemove }) {
         <div className="flex items-start gap-3">
           <img src={url} alt={slotKey} className="h-24 w-36 object-cover rounded border border-coffee/10" />
           <div className="flex flex-col gap-2">
-            <button onClick={() => fileRef.current?.click()} disabled={uploading}
-              className={btnCls}>Ersetzen</button>
-            <button onClick={onRemove}
-              className="text-xs text-red-600 hover:underline">Entfernen</button>
+            <button onClick={() => fileRef.current?.click()} disabled={uploading} className={btnCls}>Ersetzen</button>
+            <button onClick={onRemove} className="text-xs text-red-600 hover:underline">Entfernen</button>
           </div>
         </div>
       ) : (
-        <button onClick={() => fileRef.current?.click()} disabled={uploading}
-          className={`${btnCls} w-full`}>
+        <button onClick={() => fileRef.current?.click()} disabled={uploading} className={`${btnCls} w-full`}>
           {uploading ? "Lädt hoch…" : "📁 Bild hochladen"}
         </button>
       )}
       <input ref={fileRef} type="file" accept="image/*" className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
+    </div>
+  );
+}
+
+function SpeisenkarteTab({ adminKey }) {
+  const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState("");
+  const [newSection, setNewSection] = useState("");
+  const [addingItem, setAddingItem] = useState(null);
+  const [newItem, setNewItem] = useState({ name: "", description: "", price: "" });
+
+  useEffect(() => { loadMenu(); }, []);
+
+  async function loadMenu() {
+    setLoading(true);
+    try {
+      const d = await api("/api/admin/menu", adminKey);
+      setSections(d.sections || []);
+    } catch (e) {
+      setMsg("Ladefehler: " + e.message);
+    }
+    setLoading(false);
+  }
+
+  async function addSection(e) {
+    e.preventDefault();
+    if (!newSection.trim()) return;
+    try {
+      await api("/api/admin/menu", adminKey, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "section", name: newSection.trim() }),
+      });
+      setNewSection("");
+      setMsg("✓ Kategorie hinzugefügt!");
+      loadMenu();
+    } catch (e) { setMsg("Fehler: " + e.message); }
+  }
+
+  async function deleteSection(id) {
+    if (!confirm("Kategorie und alle Gerichte löschen?")) return;
+    await fetch(`/api/admin/menu?id=${id}&type=section`, { method: "DELETE", headers: { "x-admin-key": adminKey } });
+    loadMenu();
+  }
+
+  async function addItem(sectionId) {
+    if (!newItem.name.trim()) return;
+    try {
+      await api("/api/admin/menu", adminKey, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "item", section_id: sectionId, ...newItem }),
+      });
+      setAddingItem(null);
+      setNewItem({ name: "", description: "", price: "" });
+      setMsg("✓ Gericht hinzugefügt!");
+      loadMenu();
+    } catch (e) { setMsg("Fehler: " + e.message); }
+  }
+
+  async function deleteItem(id) {
+    if (!confirm("Gericht entfernen?")) return;
+    await fetch(`/api/admin/menu?id=${id}&type=item`, { method: "DELETE", headers: { "x-admin-key": adminKey } });
+    loadMenu();
+  }
+
+  if (loading) return <p className="text-coffee/50 text-sm">Lädt…</p>;
+
+  return (
+    <div className="space-y-6">
+      {msg && (
+        <p className={`text-sm px-3 py-2 rounded ${msg.startsWith("✓") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+          {msg}
+        </p>
+      )}
+      <form onSubmit={addSection} className="flex gap-2">
+        <input type="text" placeholder="Neue Kategorie (z.B. Vorspeisen, Hauptgerichte…)"
+          value={newSection} onChange={(e) => setNewSection(e.target.value)} className={`${inputCls} flex-1`} />
+        <button type="submit" className={btnCls}>+ Kategorie</button>
+      </form>
+
+      {sections.length === 0 && (
+        <div className="text-center py-12 text-coffee/40">
+          <p className="text-3xl mb-2">🍽</p>
+          <p className="text-sm">Noch keine Kategorien. Fügen Sie die erste hinzu!</p>
+        </div>
+      )}
+
+      {sections.map((section) => (
+        <div key={section.id} className="border border-coffee/15 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 bg-sand/40">
+            <h3 className="font-display font-semibold text-coffee">{section.name}</h3>
+            <button onClick={() => deleteSection(section.id)} className="text-xs text-red-500 hover:text-red-700">Löschen</button>
+          </div>
+          <div className="divide-y divide-coffee/8">
+            {(section.items || []).map((item) => (
+              <div key={item.id} className="flex items-start justify-between gap-3 px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm text-coffee">{item.name}</p>
+                  {item.description && <p className="text-xs text-coffee/60 mt-0.5 truncate">{item.description}</p>}
+                </div>
+                {item.price && <span className="text-sm font-semibold text-terra shrink-0">{item.price}</span>}
+                <button onClick={() => deleteItem(item.id)} className="text-xs text-red-400 hover:text-red-600 shrink-0">✕</button>
+              </div>
+            ))}
+          </div>
+          {addingItem === section.id ? (
+            <div className="px-4 py-3 bg-sand/20 space-y-2">
+              <input type="text" placeholder="Name (z.B. Schnitzel Wiener Art)"
+                value={newItem.name} onChange={(e) => setNewItem((p) => ({ ...p, name: e.target.value }))}
+                className={`${inputCls} text-sm`} />
+              <input type="text" placeholder="Beschreibung (optional)"
+                value={newItem.description} onChange={(e) => setNewItem((p) => ({ ...p, description: e.target.value }))}
+                className={`${inputCls} text-sm`} />
+              <input type="text" placeholder="Preis (z.B. 12,50 €)"
+                value={newItem.price} onChange={(e) => setNewItem((p) => ({ ...p, price: e.target.value }))}
+                className={`${inputCls} text-sm`} />
+              <div className="flex gap-2">
+                <button onClick={() => addItem(section.id)} className={`${btnCls} text-xs py-1.5`}>Hinzufügen</button>
+                <button onClick={() => { setAddingItem(null); setNewItem({ name: "", description: "", price: "" }); }}
+                  className="text-xs text-coffee/50 hover:text-coffee">Abbrechen</button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => setAddingItem(section.id)}
+              className="w-full text-left px-4 py-2.5 text-sm text-coffee/50 hover:bg-sand/30 hover:text-coffee transition-colors">
+              + Gericht hinzufügen
+            </button>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -220,7 +346,6 @@ function EinstellungenTab({ adminKey }) {
         <textarea placeholder="Adresse" value={form.address} rows={2}
           onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputCls} />
       </div>
-
       <div className="space-y-2">
         <h3 className="font-display font-semibold text-coffee">Öffnungszeiten</h3>
         {DAYS.map((day) => (
@@ -233,7 +358,6 @@ function EinstellungenTab({ adminKey }) {
           </div>
         ))}
       </div>
-
       {msg && <p className={`text-sm ${msg.startsWith("✓") ? "text-green-700" : "text-red-600"}`}>{msg}</p>}
       <button type="submit" className={btnCls}>Speichern</button>
     </form>
